@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/m_alea00.c" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/m_alea00.h" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/m_opbits_int.c" charset="ISO-8859-1" />
     <file url="file://$PROJECT_DIR$/m_opbits_int.h" charset="ISO-8859-1" />
   </component>
