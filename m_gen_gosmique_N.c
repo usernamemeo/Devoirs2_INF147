@@ -122,7 +122,7 @@ int entree_rayonnement_N(t_Gen_GosmiqueN* gen) {
     if (gen->parcours_en_cours) return 0; // Déjà un parcours en cours
 
     // Choisir aléatoirement première (0) ou dernière ligne
-    int ligne_entree = (randi00_born(0, gen->nb_lignes)) ? 0 : (gen->nb_lignes - 1);
+    int ligne_entree = (RANDI00(2) == 1) ? 0 : (gen->nb_lignes - 1);
 
     // Chercher tous les capteurs VIDE sur cette ligne
     int capteurs_vides[NB_COLONNES];
@@ -140,7 +140,7 @@ int entree_rayonnement_N(t_Gen_GosmiqueN* gen) {
     if (nb_vides == 0) return 0;
 
     // Choisir aléatoirement parmi les capteurs VIDE
-    int index_choisi = rand() % nb_vides;
+    int index_choisi = RANDI00(nb_vides) - 1;
     int colonne_entree = capteurs_vides[index_choisi];
 
     // Démarrer le parcours
@@ -164,37 +164,31 @@ int prochain_capteur_N(t_Gen_GosmiqueN* gen) {
     int ligne_actuelle = gen->position_ligne_actuelle;
     int colonne_actuelle = gen->position_colonne_actuelle;
 
-    // Tableau pour stocker les positions adjacentes valides
+    // AJOUT: Vérifier si on peut sortir du Gen_Gosmique
+    int peut_sortir = (ligne_actuelle == 0 || ligne_actuelle == gen->nb_lignes - 1);
+
     typedef struct {
         int ligne;
         int colonne;
     } Position;
 
-    Position candidats[6]; // Maximum 6 voisins possibles
+    Position candidats[6];
     int nb_candidats = 0;
-
-    // Règles de déplacement:
-    // - Ligne: doit changer (K-1 ou K+1)
-    // - Colonne: peut rester ou changer (C-1, C, C+1)
 
     int lignes_possibles[2];
     int nb_lignes_possibles = 0;
 
-    // Ligne au-dessus
     if (ligne_actuelle > 0) {
         lignes_possibles[nb_lignes_possibles++] = ligne_actuelle - 1;
     }
-    // Ligne en-dessous
     if (ligne_actuelle < gen->nb_lignes - 1) {
         lignes_possibles[nb_lignes_possibles++] = ligne_actuelle + 1;
     }
 
-    // Pour chaque ligne possible
     int i, nouvelle_ligne, nouvelle_colonne;
     for (i = 0; i < nb_lignes_possibles; i++) {
         nouvelle_ligne = lignes_possibles[i];
 
-        // Colonnes possibles: C-1, C, C+1
         int colonnes_a_tester[3] = {
             colonne_actuelle - 1,
             colonne_actuelle,
@@ -205,7 +199,6 @@ int prochain_capteur_N(t_Gen_GosmiqueN* gen) {
         for (j = 0; j < 3; j++) {
             nouvelle_colonne = colonnes_a_tester[j];
 
-            // Vérifier si position valide et capteur VIDE
             if (position_valide_N(gen, nouvelle_ligne, nouvelle_colonne) &&
                 gen->grille[nouvelle_ligne][nouvelle_colonne] == VIDE) {
 
@@ -216,8 +209,15 @@ int prochain_capteur_N(t_Gen_GosmiqueN* gen) {
         }
     }
 
-    // Aucun déplacement possible -> fin du parcours
-    if (nb_candidats == 0) {
+    // MODIFIÉ: Sortie possible
+    int sort_du_gen = 0;
+    if (peut_sortir && nb_candidats > 0) {
+        if (RANDF00() < 0.05) {   // 5% de chance
+            sort_du_gen = 1;
+        }
+    }
+
+    if (nb_candidats == 0 || sort_du_gen) {
         // Terminer le parcours
         gen->parcours_en_cours = 0;
         gen->nb_parcours_total++;
@@ -227,15 +227,13 @@ int prochain_capteur_N(t_Gen_GosmiqueN* gen) {
         return 0;
     }
 
-    // Choisir aléatoirement parmi les candidats
-    int index_choisi = randi00(nb_candidats);
+    int index_choisi = RANDI00(nb_candidats) - 1;
     nouvelle_ligne = candidats[index_choisi].ligne;
     nouvelle_colonne = candidats[index_choisi].colonne;
 
-    // Déplacer le rayonnement
     gen->grille[nouvelle_ligne][nouvelle_colonne] = TRANSIT;
-    gen->position_ligne_actuelle = ligne_actuelle;
-    gen->position_colonne_actuelle = colonne_actuelle;
+    gen->position_ligne_actuelle = nouvelle_ligne;
+    gen->position_colonne_actuelle = nouvelle_colonne;
     gen->longueur_parcours_actuel++;
 
     return 1;
@@ -247,16 +245,28 @@ int prochain_capteur_N(t_Gen_GosmiqueN* gen) {
 
 int parcours_complet_N(t_Gen_GosmiqueN* gen) {
     if (gen == NULL) return 0;
-    if (gen->parcours_en_cours) return 0; // Déjà un parcours en cours
+    if (gen->parcours_en_cours) return 0;
 
-    // Démarrer l'entrée
     if (!entree_rayonnement_N(gen)) {
-        return 0; // Échec de l'entrée
+        return 0;
     }
 
-    // Continuer jusqu'à la fin
-    while (prochain_capteur_N(gen)) {
-        // Continue tant que possible
+    // AJOUT: Limite de sécurité
+    int max_iterations = gen->nb_lignes * NB_COLONNES * 2;
+    int iterations = 0;
+
+    while (prochain_capteur_N(gen) && iterations < max_iterations) {
+        iterations++;
+    }
+
+    // Forcer terminaison si limite atteinte
+    if (iterations >= max_iterations && gen->parcours_en_cours) {
+        gen->parcours_en_cours = 0;
+        gen->nb_parcours_total++;
+        gen->longueur_dernier_parcours = gen->longueur_parcours_actuel;
+        gen->somme_longueurs += gen->longueur_parcours_actuel;
+        gen->somme_carres_longueurs += (long long)(gen->longueur_parcours_actuel) *
+                                       (long long)(gen->longueur_parcours_actuel);
     }
 
     return gen->longueur_dernier_parcours;
@@ -277,7 +287,7 @@ int transition_opaq_vide_N(t_Gen_GosmiqueN* gen) {
         for (j = 0; j < NB_COLONNES; j++) {
             if (gen->grille[i][j] == OPAQ) {
                 // Test aléatoire avec probabilité P_OPAQ_VIDE
-                if (randf00() < gen->p_opaq_vide) {
+                if (RANDF00() < gen->p_opaq_vide) {
                     gen->grille[i][j] = VIDE;
                     nb_transitions++;
                 }
@@ -303,7 +313,7 @@ int transition_transit_N(t_Gen_GosmiqueN* gen) {
         for (j = 0; j < NB_COLONNES; j++) {
             if (gen->grille[i][j] == TRANSIT) {
                 // Test aléatoire avec probabilité P_TRANSIT_VIDE
-                if (randf00() < gen->p_transit_vide) {
+                if (RANDF00() < gen->p_transit_vide) {
                     gen->grille[i][j] = VIDE;
                 } else {
                     gen->grille[i][j] = OPAQ;

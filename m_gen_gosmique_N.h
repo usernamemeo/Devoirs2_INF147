@@ -18,7 +18,7 @@
 
 // Constantes de la grille
 #define NB_COLONNES 8
-#define P_OPAQ_VIDE 0.3
+#define P_OPAQ_VIDE 0.5
 #define P_TRANSIT_VIDE 0.3
 
 typedef struct {
