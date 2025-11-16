@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include "m_R3.h"
 #include "m_alea00.h"
 #include "m_opbits_char.h"
 
@@ -92,37 +91,12 @@ int get_etat_capteur_B(t_Gen_GosmiqueB* gen, int ligne, int colonne);
 // Modifie l'état d'un capteur (écriture des 2 bits)
 int set_etat_capteur_B(t_Gen_GosmiqueB* gen, int ligne, int colonne, int nouvel_etat);
 
-// Compte le nombre de capteurs dans un état donné
-int compter_capteurs_etat_B(t_Gen_GosmiqueB* gen, int etat);
-
 // Vérifie si une position est valide
 int position_valide_B(t_Gen_GosmiqueB* gen, int ligne, int colonne);
 
 // Vérifie si sur ligne frontière
 int est_ligne_frontiere_B(t_Gen_GosmiqueB* gen, int ligne);
 
-// Affichage pour débogage
-void afficher_grille_B(t_Gen_GosmiqueB* gen);
-void afficher_statistiques_B(t_Gen_GosmiqueB* gen);
-void afficher_parcours_debug_B(t_Gen_GosmiqueB* gen);
-
-//========================================================
-// FONCTIONS POUR FICHIER LOG
-//========================================================
-
-void ecrire_statistiques_log_B(FILE* fichier, t_Gen_GosmiqueB* gen);
-
-//========================================================
-// FONCTIONS INFORMATRICES
-//========================================================
-
-int get_nb_parcours_B(t_Gen_GosmiqueB* gen);
-int get_longueur_dernier_B(t_Gen_GosmiqueB* gen);
-long get_somme_longueurs_B(t_Gen_GosmiqueB* gen);
-long long get_somme_carres_B(t_Gen_GosmiqueB* gen);
-double get_energie_totale_B(t_Gen_GosmiqueB* gen);
-double get_longueur_moyenne_B(t_Gen_GosmiqueB* gen);
-int est_parcours_en_cours_B(t_Gen_GosmiqueB* gen);
 
 #endif // M_GEN_GOSMIQUE_B_H
 

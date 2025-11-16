@@ -11,8 +11,10 @@ add_executable(Devoirs2
         m_gen_gosmique_N.h
         m_gen_gosmique_B.c
         m_gen_gosmique_B.h
-        main.c
+        #test_N.c
         m_alea00.c
         affich_informatrice_log.c
         affich_informatrice_log.h
+        main.c
+        main.c
 )

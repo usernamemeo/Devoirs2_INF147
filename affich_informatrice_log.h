@@ -11,6 +11,7 @@
 #include <math.h>
 #include "m_alea00.h"
 #include "m_gen_gosmique_N.h"
+#include "m_gen_gosmique_B.h"
 /*==========================================================*/
 // AFFICHAGE
 /*==========================================================*/
@@ -44,5 +45,30 @@ int est_parcours_en_cours_N(t_Gen_GosmiqueN* gen);
 void ecrire_statistiques_log_N(FILE* fichier, t_Gen_GosmiqueN* gen);
 
 int compter_capteurs_etat_N(t_Gen_GosmiqueN* gen, int etat);
+
+
+/*==========================================================*/
+//affichage B
+/*==========================================================*/
+
+
+int compter_capteurs_etat_B(t_Gen_GosmiqueB* gen, int etat);
+
+
+void afficher_grille_B(t_Gen_GosmiqueB* gen);
+void afficher_statistiques_B(t_Gen_GosmiqueB* gen);
+void afficher_parcours_debug_B(t_Gen_GosmiqueB* gen);
+
+
+void ecrire_statistiques_log_B(FILE* fichier, t_Gen_GosmiqueB* gen);
+
+int get_nb_parcours_B(t_Gen_GosmiqueB* gen);
+int get_longueur_dernier_B(t_Gen_GosmiqueB* gen);
+long get_somme_longueurs_B(t_Gen_GosmiqueB* gen);
+long long get_somme_carres_B(t_Gen_GosmiqueB* gen);
+double get_energie_totale_B(t_Gen_GosmiqueB* gen);
+double get_longueur_moyenne_B(t_Gen_GosmiqueB* gen);
+int est_parcours_en_cours_B(t_Gen_GosmiqueB* gen);
+
 
 #endif //DEVOIRS2_AFFICH_INFORMATRICE_LOG_H
