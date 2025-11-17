@@ -27,7 +27,7 @@ t_Gen_GosmiqueN* creer_gen_gosmique_n(int nb_lignes, double p_transit_vide) {
     // Allocation de chaque ligne
     int i, j;
     for (i = 0; i < nb_lignes; i++) {
-        gen->grille[i] = (int*)malloc(NB_COLONNES * sizeof(int));
+        gen->grille[i] = malloc(NB_COLONNES * sizeof(int));
         if (gen->grille[i] == NULL) {
             // Libérer ce qui a déjà été alloué
             for (j = 0; j < i; j++) {
@@ -118,6 +118,7 @@ int est_ligne_frontiere_N(t_Gen_GosmiqueN* gen, int ligne) {
 /*--------------------------------------------------------------------------*/
 
 int entree_rayonnement_N(t_Gen_GosmiqueN* gen) {
+
     if (gen == NULL) return 0;
     if (gen->parcours_en_cours) return 0; // Déjà un parcours en cours
 
@@ -158,6 +159,7 @@ int entree_rayonnement_N(t_Gen_GosmiqueN* gen) {
 /*--------------------------------------------------------------------------------------------*/
 
 int prochain_capteur_N(t_Gen_GosmiqueN* gen) {
+
     if (gen == NULL) return 0;
     if (!gen->parcours_en_cours) return 0;
 
@@ -277,6 +279,7 @@ int parcours_complet_N(t_Gen_GosmiqueN* gen) {
 /*--------------------------------------------------------------------------------------------*/
 
 int transition_opaq_vide_N(t_Gen_GosmiqueN* gen) {
+
     if (gen == NULL) return 0;
     if (gen->parcours_en_cours) return 0; // Pas pendant un parcours
 
@@ -303,6 +306,7 @@ int transition_opaq_vide_N(t_Gen_GosmiqueN* gen) {
 /*------------------------------------------------------------------------------------------------*/
 
 int transition_transit_N(t_Gen_GosmiqueN* gen) {
+
     if (gen == NULL) return 0;
     if (gen->parcours_en_cours) return 0; // Pas pendant un parcours
 

@@ -18,8 +18,8 @@
 
 // Constantes de la grille
 #define NB_COLONNES 8
-#define P_OPAQ_VIDE 0.5
-#define P_TRANSIT_VIDE 0.3
+#define P_OPAQ_VIDE 0.53
+
 
 typedef struct {
     // Grille des capteurs (matrice dynamique)
